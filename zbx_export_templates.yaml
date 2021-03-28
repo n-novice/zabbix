@@ -1,0 +1,1446 @@
+zabbix_export:
+  version: '5.2'
+  date: '2021-03-28T12:02:41Z'
+  groups:
+    -
+      name: 00_Network機器
+    -
+      name: 01_負荷分散
+    -
+      name: Templates
+  templates:
+    -
+      template: Template_F5_SNMP
+      name: Template_F5_SNMP
+      groups:
+        -
+          name: 00_Network機器
+        -
+          name: 01_負荷分散
+        -
+          name: Templates
+      applications:
+        -
+          name: ConfigSync
+        -
+          name: Connections
+        -
+          name: CPU
+        -
+          name: Failover
+        -
+          name: 'HTTP Requests'
+        -
+          name: Interface
+        -
+          name: Memory
+        -
+          name: Nodes
+        -
+          name: Packets
+        -
+          name: PoolMember
+        -
+          name: Pools
+        -
+          name: Sessions
+        -
+          name: Throughput
+        -
+          name: Uptime
+        -
+          name: Version
+        -
+          name: VirtualServers
+      items:
+        -
+          name: 'TMM Memory Total'
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysGlobalTmmStatMemoryTotal.0'
+          key: 'F5-BIGIP-SYSTEM-MIB[sysGlobalTmmStatMemoryTotal]'
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          value_type: FLOAT
+          units: B
+          applications:
+            -
+              name: Memory
+        -
+          name: 'TMM Memory Used'
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysGlobalTmmStatMemoryUsed.0'
+          key: 'F5-BIGIP-SYSTEM-MIB[sysGlobalTmmStatMemoryUsed]'
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          value_type: FLOAT
+          units: B
+          applications:
+            -
+              name: Memory
+        -
+          name: 'Swap Memory Total'
+          type: SNMP_AGENT
+          snmp_oid: 'HOST-RESOURCES-MIB::hrStorageSize.10'
+          key: 'HOST-RESOURCES-MIB[hrStorageSize.10]'
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          units: B
+          applications:
+            -
+              name: Memory
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '1024'
+        -
+          name: 'Swap Memory Used'
+          type: SNMP_AGENT
+          snmp_oid: 'HOST-RESOURCES-MIB::hrStorageUsed.10'
+          key: 'HOST-RESOURCES-MIB[hrStorageUsed.10]'
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          units: B
+          applications:
+            -
+              name: Memory
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '1024'
+        -
+          name: 'System Uptime'
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysSystemUptime.0'
+          key: host.system.uptime
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          value_type: FLOAT
+          units: uptime
+          applications:
+            -
+              name: Uptime
+          preprocessing:
+            -
+              type: MULTIPLIER
+              parameters:
+                - '0.01'
+        -
+          name: 'System Software Version'
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysProductVersion.0'
+          key: host.system.varsion
+          delay: '300'
+          history: 14d
+          trends: '0'
+          value_type: TEXT
+          applications:
+            -
+              name: Version
+        -
+          name: 'Failover status'
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysCmFailoverStatusId.0'
+          key: sysCmFailoverStatusId
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          applications:
+            -
+              name: Failover
+          valuemap:
+            name: 'F5 Failover state'
+        -
+          name: 'ConfigSync status'
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysCmSyncStatusId.0'
+          key: sysCmSyncStatusId
+          delay: '3600'
+          history: 14d
+          trends: 1825d
+          value_type: FLOAT
+          applications:
+            -
+              name: ConfigSync
+          valuemap:
+            name: 'F5 sysCmSyncStatusId'
+          triggers:
+            -
+              expression: '{last(#1)}<>3 and {last(#2)}<>3 and {last(#3)}<>3'
+              name: 'F5 ConfigSync status is not in Sync'
+              priority: INFO
+        -
+          name: 'CPU(システム)使用率[1分]'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.3375.2.1.1.2.20.29.0
+          key: sysGlobalHostCpuUsageRatio1m
+          trends: 1825d
+          units: '%'
+          applications:
+            -
+              name: CPU
+        -
+          name: 'CPU(TMM)使用率[1分]'
+          type: SNMP_AGENT
+          snmp_oid: .1.3.6.1.4.1.3375.2.1.1.2.21.35.0
+          key: sysGlobalTmmStatTmUsageRatio1m
+          trends: 1825d
+          units: '%'
+          applications:
+            -
+              name: CPU
+        -
+          name: 'Host Memory Total'
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysHostMemoryTotal.0'
+          key: sysHostMemoryTotal
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          value_type: FLOAT
+          units: B
+          applications:
+            -
+              name: Memory
+        -
+          name: 'Host Memory Used'
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysHostMemoryUsed.0'
+          key: sysHostMemoryUsed
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          value_type: FLOAT
+          units: B
+          applications:
+            -
+              name: Memory
+        -
+          name: sysStatClientBytesIn
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatClientBytesIn.0'
+          key: sysStatClientBytesIn
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          value_type: FLOAT
+          units: bps
+          applications:
+            -
+              name: Throughput
+          preprocessing:
+            -
+              type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+            -
+              type: MULTIPLIER
+              parameters:
+                - '8'
+        -
+          name: sysStatClientBytesOut
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatClientBytesOut.0'
+          key: sysStatClientBytesOut
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          value_type: FLOAT
+          units: bps
+          applications:
+            -
+              name: Throughput
+          preprocessing:
+            -
+              type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+            -
+              type: MULTIPLIER
+              parameters:
+                - '8'
+        -
+          name: sysStatClientCurConns
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatClientCurConns.0'
+          key: sysStatClientCurConns
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          applications:
+            -
+              name: Connections
+        -
+          name: sysStatClientPktsIn5m
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatClientPktsIn5m.0'
+          key: sysStatClientPktsIn5m
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          applications:
+            -
+              name: Packets
+        -
+          name: sysStatClientPktsOut5m
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatClientPktsOut5m.0'
+          key: sysStatClientPktsOut5m
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          applications:
+            -
+              name: Packets
+        -
+          name: sysStatConnectionMemoryErrors
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatConnectionMemoryErrors.0'
+          key: sysStatConnectionMemoryErrors
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          applications:
+            -
+              name: Connections
+        -
+          name: sysStatCurrPvaAssistConn
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatCurrPvaAssistConn.0'
+          key: sysStatCurrPvaAssistConn
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          applications:
+            -
+              name: Connections
+        -
+          name: sysStatDroppedPackets
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatDroppedPackets.0'
+          key: sysStatDroppedPackets
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          applications:
+            -
+              name: Packets
+          preprocessing:
+            -
+              type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+        -
+          name: sysStatHttpRequests
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatHttpRequests.0'
+          key: sysStatHttpRequests
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          applications:
+            -
+              name: 'HTTP Requests'
+          preprocessing:
+            -
+              type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+        -
+          name: sysStatIncomingPacketErrors
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatIncomingPacketErrors.0'
+          key: sysStatIncomingPacketErrors
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          applications:
+            -
+              name: Packets
+          preprocessing:
+            -
+              type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+        -
+          name: sysStatLicenseDeny
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatLicenseDeny.0'
+          key: sysStatLicenseDeny
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          applications:
+            -
+              name: Packets
+          preprocessing:
+            -
+              type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+        -
+          name: sysStatMaxConnVirtualPathDeny
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatMaxConnVirtualPathDeny.0'
+          key: sysStatMaxConnVirtualPathDeny
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          applications:
+            -
+              name: Connections
+        -
+          name: sysStatMemoryTotal
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatMemoryTotal.0'
+          key: sysStatMemoryTotal
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          units: B
+          applications:
+            -
+              name: Memory
+        -
+          name: sysStatMemoryUsed
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatMemoryUsed.0'
+          key: sysStatMemoryUsed
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          units: B
+          applications:
+            -
+              name: Memory
+        -
+          name: sysStatNoHandlerDeny
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatNoHandlerDeny.0'
+          key: sysStatNoHandlerDeny
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          applications:
+            -
+              name: Packets
+          preprocessing:
+            -
+              type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+        -
+          name: sysStatOutgoingPacketErrors
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatOutgoingPacketErrors.0'
+          key: sysStatOutgoingPacketErrors
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          applications:
+            -
+              name: Packets
+          preprocessing:
+            -
+              type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+        -
+          name: sysStatPvaClientCurConns
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatPvaClientCurConns.0'
+          key: sysStatPvaClientCurConns
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          applications:
+            -
+              name: Connections
+        -
+          name: sysStatPvaServerCurConns
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatPvaServerCurConns.0'
+          key: sysStatPvaServerCurConns
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          applications:
+            -
+              name: Connections
+        -
+          name: sysStatServerBytesIn
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatServerBytesIn.0'
+          key: sysStatServerBytesIn
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          value_type: FLOAT
+          units: bps
+          applications:
+            -
+              name: Throughput
+          preprocessing:
+            -
+              type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+            -
+              type: MULTIPLIER
+              parameters:
+                - '8'
+        -
+          name: sysStatServerBytesOut
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatServerBytesOut.0'
+          key: sysStatServerBytesOut
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          units: bps
+          applications:
+            -
+              name: Throughput
+          preprocessing:
+            -
+              type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+            -
+              type: MULTIPLIER
+              parameters:
+                - '8'
+        -
+          name: sysStatServerCurConns
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatServerCurConns.0'
+          key: sysStatServerCurConns
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          applications:
+            -
+              name: Connections
+        -
+          name: sysStatServerPktsIn5m
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatServerPktsIn5m.0'
+          key: sysStatServerPktsIn5m
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          applications:
+            -
+              name: Packets
+        -
+          name: sysStatServerPktsOut5m
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatServerPktsOut5m.0'
+          key: sysStatServerPktsOut5m
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          applications:
+            -
+              name: Packets
+        -
+          name: sysStatTmIdleCycles
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatTmIdleCycles.0'
+          key: sysStatTmIdleCycles
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          applications:
+            -
+              name: CPU
+        -
+          name: sysStatTmSleepCycles
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatTmSleepCycles.0'
+          key: sysStatTmSleepCycles
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          applications:
+            -
+              name: CPU
+        -
+          name: sysStatTmTotalCycles
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatTmTotalCycles.0'
+          key: sysStatTmTotalCycles
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          applications:
+            -
+              name: CPU
+        -
+          name: sysStatVirtualServerNonSynDeny
+          type: SNMP_AGENT
+          snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysStatVirtualServerNonSynDeny.0'
+          key: sysStatVirtualServerNonSynDeny
+          delay: '300'
+          history: 14d
+          trends: 1825d
+          applications:
+            -
+              name: Packets
+          preprocessing:
+            -
+              type: CHANGE_PER_SECOND
+              parameters:
+                - ''
+      discovery_rules:
+        -
+          name: Nodes
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#SNMPVALUE},F5-BIGIP-LOCAL-MIB::ltmNodeAddrStatusName]'
+          key: snmp.discovery.nodes
+          delay: '60'
+          item_prototypes:
+            -
+              name: 'Node "{#SNMPVALUE}" ltmNodeAddrStatServerBytesIn'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-LOCAL-MIB::ltmNodeAddrStatServerBytesIn."{#SNMPVALUE}"'
+              key: 'ltmNodeAddrStatServerBytesIn.["{#SNMPVALUE}"]'
+              delay: '300'
+              history: 14d
+              trends: 1825d
+              value_type: FLOAT
+              units: bps
+              applications:
+                -
+                  name: Nodes
+              preprocessing:
+                -
+                  type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+                -
+                  type: MULTIPLIER
+                  parameters:
+                    - '8'
+            -
+              name: 'Node "{#SNMPVALUE}" ltmNodeAddrStatServerBytesOut'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-LOCAL-MIB::ltmNodeAddrStatServerBytesOut."{#SNMPVALUE}"'
+              key: 'ltmNodeAddrStatServerBytesOut.["{#SNMPVALUE}"]'
+              delay: '300'
+              history: 14d
+              trends: 1825d
+              value_type: FLOAT
+              units: bps
+              applications:
+                -
+                  name: Nodes
+              preprocessing:
+                -
+                  type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+                -
+                  type: MULTIPLIER
+                  parameters:
+                    - '8'
+            -
+              name: 'Node "{#SNMPVALUE}" ltmNodeAddrStatServerCurConns'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-LOCAL-MIB::ltmNodeAddrStatServerCurConns."{#SNMPVALUE}"'
+              key: 'ltmNodeAddrStatServerCurConns.["{#SNMPVALUE}"]'
+              delay: '300'
+              history: 14d
+              trends: 1825d
+              value_type: FLOAT
+              applications:
+                -
+                  name: Nodes
+            -
+              name: 'Node "{#SNMPVALUE}" ltmNodeAddrStatusAvailState'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-LOCAL-MIB::ltmNodeAddrStatusAvailState."{#SNMPVALUE}"'
+              key: 'ltmNodeAddrStatusAvailState.["{#SNMPVALUE}"]'
+              delay: '300'
+              history: 14d
+              trends: 1825d
+              value_type: FLOAT
+              applications:
+                -
+                  name: Nodes
+              valuemap:
+                name: 'F5 AvailState'
+          trigger_prototypes:
+            -
+              expression: '{Template_F5_SNMP:ltmNodeAddrStatusAvailState.["{#SNMPVALUE}"].last()}=5 and {Template_F5_SNMP:sysCmFailoverStatusId.last()}=4'
+              name: 'F5 Node "{#SNMPVALUE}" is disabled'
+              priority: INFO
+            -
+              expression: '{Template_F5_SNMP:ltmNodeAddrStatusAvailState.["{#SNMPVALUE}"].last()}=3 and {Template_F5_SNMP:sysCmFailoverStatusId.last()}=4'
+              name: 'F5 Node "{#SNMPVALUE}" is down'
+              priority: WARNING
+        -
+          name: Pools
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#SNMPVALUE},F5-BIGIP-LOCAL-MIB::ltmPoolStatName]'
+          key: snmp.discovery.pools
+          delay: '60'
+          item_prototypes:
+            -
+              name: 'Pool "{#SNMPVALUE}" ltmPoolActiveMemberCnt'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-LOCAL-MIB::ltmPoolActiveMemberCnt."{#SNMPVALUE}"'
+              key: 'ltmPoolActiveMemberCnt[{#SNMPVALUE}]'
+              delay: '300'
+              history: 14d
+              trends: 1825d
+              value_type: FLOAT
+              applications:
+                -
+                  name: Pools
+            -
+              name: 'Pool "{#SNMPVALUE}" ltmPoolLbMode'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-LOCAL-MIB::ltmPoolLbMode."{#SNMPVALUE}"'
+              key: 'ltmPoolLbMode[{#SNMPVALUE}]'
+              delay: '300'
+              history: 14d
+              trends: 1825d
+              value_type: FLOAT
+              applications:
+                -
+                  name: Pools
+              valuemap:
+                name: 'F5 ltmPoolLbMode'
+            -
+              name: 'Pool "{#SNMPVALUE}" ltmPoolMemberCnt'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-LOCAL-MIB::ltmPoolMemberCnt."{#SNMPVALUE}"'
+              key: 'ltmPoolMemberCnt[{#SNMPVALUE}]'
+              delay: '300'
+              history: 14d
+              trends: 1825d
+              value_type: FLOAT
+              applications:
+                -
+                  name: Pools
+            -
+              name: 'Pool "{#SNMPVALUE}" ltmPoolStatServerBytesIn'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-LOCAL-MIB::ltmPoolStatServerBytesIn."{#SNMPVALUE}"'
+              key: 'ltmPoolStatServerBytesIn[{#SNMPVALUE}]'
+              delay: '300'
+              history: 14d
+              trends: 1825d
+              value_type: FLOAT
+              units: bps
+              applications:
+                -
+                  name: Pools
+              preprocessing:
+                -
+                  type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+                -
+                  type: MULTIPLIER
+                  parameters:
+                    - '8'
+            -
+              name: 'Pool "{#SNMPVALUE}" ltmPoolStatServerBytesOut'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-LOCAL-MIB::ltmPoolStatServerBytesOut."{#SNMPVALUE}"'
+              key: 'ltmPoolStatServerBytesOut[{#SNMPVALUE}]'
+              delay: '300'
+              history: 14d
+              trends: 1825d
+              value_type: FLOAT
+              units: bps
+              applications:
+                -
+                  name: Pools
+              preprocessing:
+                -
+                  type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+                -
+                  type: MULTIPLIER
+                  parameters:
+                    - '8'
+            -
+              name: 'Pool "{#SNMPVALUE}" ltmPoolStatServerCurConns'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-LOCAL-MIB::ltmPoolStatServerCurConns."{#SNMPVALUE}"'
+              key: 'ltmPoolStatServerCurConns[{#SNMPVALUE}]'
+              delay: '300'
+              history: 14d
+              trends: 1825d
+              value_type: FLOAT
+              applications:
+                -
+                  name: Pools
+            -
+              name: 'Pool "{#SNMPVALUE}" ltmPoolStatTotRequests'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-LOCAL-MIB::ltmPoolStatTotRequests."{#SNMPVALUE}"'
+              key: 'ltmPoolStatTotRequests[{#SNMPVALUE}]'
+              delay: '300'
+              history: 14d
+              trends: 1825d
+              value_type: FLOAT
+              units: req/s
+              applications:
+                -
+                  name: Pools
+              valuemap:
+                name: 'F5 AvailState'
+              preprocessing:
+                -
+                  type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+            -
+              name: 'Pool "{#SNMPVALUE}" ltmPoolStatusAvailState'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-LOCAL-MIB::ltmPoolStatusAvailState."{#SNMPVALUE}"'
+              key: 'ltmPoolStatusAvailState[{#SNMPVALUE}]'
+              delay: '300'
+              history: 14d
+              trends: 1825d
+              value_type: FLOAT
+              applications:
+                -
+                  name: Pools
+              valuemap:
+                name: 'F5 AvailState'
+          trigger_prototypes:
+            -
+              expression: '{Template_F5_SNMP:ltmPoolStatusAvailState[{#SNMPVALUE}].last()}=5 and {Template_F5_SNMP:sysCmFailoverStatusId.last()}=4'
+              name: 'F5 Pool "{#SNMPVALUE}" is disabled'
+              priority: INFO
+            -
+              expression: '{Template_F5_SNMP:ltmPoolStatusAvailState[{#SNMPVALUE}].last()}=3 and {Template_F5_SNMP:sysCmFailoverStatusId.last()}=4'
+              name: 'F5 Pool "{#SNMPVALUE}" is down'
+              priority: WARNING
+          graph_prototypes:
+            -
+              name: 'Pool "{#SNMPVALUE}" Connections vs Req'
+              graph_items:
+                -
+                  sortorder: '1'
+                  drawtype: BOLD_LINE
+                  color: C80000
+                  yaxisside: RIGHT
+                  item:
+                    host: Template_F5_SNMP
+                    key: 'ltmPoolStatServerCurConns[{#SNMPVALUE}]'
+                -
+                  sortorder: '2'
+                  drawtype: BOLD_LINE
+                  color: 3333FF
+                  item:
+                    host: Template_F5_SNMP
+                    key: 'ltmPoolStatTotRequests[{#SNMPVALUE}]'
+        -
+          name: VirtualServers
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#SNMPVALUE},F5-BIGIP-LOCAL-MIB::ltmVirtualServStatName]'
+          key: snmp.discovery.virtualserver
+          delay: '60'
+          item_prototypes:
+            -
+              name: 'VS "{#SNMPVALUE}" ltmVirtualServStatClientBytesIn'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-LOCAL-MIB::ltmVirtualServStatClientBytesIn."{#SNMPVALUE}"'
+              key: 'ltmVirtualServStatClientBytesIn.["{#SNMPVALUE}"]'
+              delay: '300'
+              history: 14d
+              trends: 1825d
+              units: bps
+              applications:
+                -
+                  name: VirtualServers
+              preprocessing:
+                -
+                  type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+                -
+                  type: MULTIPLIER
+                  parameters:
+                    - '8'
+            -
+              name: 'VS "{#SNMPVALUE}" ltmVirtualServStatClientBytesOut'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-LOCAL-MIB::ltmVirtualServStatClientBytesOut."{#SNMPVALUE}"'
+              key: 'ltmVirtualServStatClientBytesOut.["{#SNMPVALUE}"]'
+              delay: '300'
+              history: 14d
+              trends: 1825d
+              units: bps
+              applications:
+                -
+                  name: VirtualServers
+              preprocessing:
+                -
+                  type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+                -
+                  type: MULTIPLIER
+                  parameters:
+                    - '8'
+            -
+              name: 'VS "{#SNMPVALUE}" ltmVirtualServStatClientCurConns'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-LOCAL-MIB::ltmVirtualServStatClientCurConns."{#SNMPVALUE}"'
+              key: 'ltmVirtualServStatClientCurConns.["{#SNMPVALUE}"]'
+              delay: '300'
+              history: 14d
+              trends: 1825d
+              value_type: FLOAT
+              applications:
+                -
+                  name: VirtualServers
+            -
+              name: 'VS "{#SNMPVALUE}" ltmVirtualServStatClientPktsIn'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-LOCAL-MIB::ltmVirtualServStatClientPktsIn."{#SNMPVALUE}"'
+              key: 'ltmVirtualServStatClientPktsIn.["{#SNMPVALUE}"]'
+              delay: '300'
+              history: 14d
+              trends: 1825d
+              value_type: FLOAT
+              units: pkt/s
+              applications:
+                -
+                  name: VirtualServers
+              preprocessing:
+                -
+                  type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+            -
+              name: 'VS "{#SNMPVALUE}" ltmVirtualServStatClientPktsOut'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-LOCAL-MIB::ltmVirtualServStatClientPktsOut."{#SNMPVALUE}"'
+              key: 'ltmVirtualServStatClientPktsOut.["{#SNMPVALUE}"]'
+              delay: '300'
+              history: 14d
+              trends: 1825d
+              value_type: FLOAT
+              units: pkt/s
+              applications:
+                -
+                  name: VirtualServers
+              preprocessing:
+                -
+                  type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+            -
+              name: 'VS "{#SNMPVALUE}" ltmVirtualServStatClientTotConns'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-LOCAL-MIB::ltmVirtualServStatClientTotConns."{#SNMPVALUE}"'
+              key: 'ltmVirtualServStatClientTotConns.["{#SNMPVALUE}"]'
+              delay: '300'
+              history: 14d
+              trends: 1825d
+              value_type: FLOAT
+              units: conn/s
+              applications:
+                -
+                  name: VirtualServers
+              preprocessing:
+                -
+                  type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+            -
+              name: 'VS "{#SNMPVALUE}" ltmVirtualServStatNoNodesErrors'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-LOCAL-MIB::ltmVirtualServStatNoNodesErrors."{#SNMPVALUE}"'
+              key: 'ltmVirtualServStatNoNodesErrors.["{#SNMPVALUE}"]'
+              delay: '300'
+              history: 14d
+              trends: 1825d
+              value_type: FLOAT
+              applications:
+                -
+                  name: VirtualServers
+            -
+              name: 'VS "{#SNMPVALUE}" ltmVirtualServStatTotRequests'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-LOCAL-MIB::ltmVirtualServStatTotRequests."{#SNMPVALUE}"'
+              key: 'ltmVirtualServStatTotRequests.["{#SNMPVALUE}"]'
+              delay: '300'
+              history: 14d
+              trends: 1825d
+              value_type: FLOAT
+              units: req/s
+              applications:
+                -
+                  name: VirtualServers
+              preprocessing:
+                -
+                  type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+            -
+              name: 'VS "{#SNMPVALUE}" ltmVsStatusAvailState'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-LOCAL-MIB::ltmVsStatusAvailState."{#SNMPVALUE}"'
+              key: 'ltmVsStatusAvailState.["{#SNMPVALUE}"]'
+              delay: '300'
+              history: 14d
+              trends: 1825d
+              value_type: FLOAT
+              applications:
+                -
+                  name: VirtualServers
+              valuemap:
+                name: 'F5 AvailState'
+          trigger_prototypes:
+            -
+              expression: '{Template_F5_SNMP:ltmVsStatusAvailState.["{#SNMPVALUE}"].last()}=5 and {Template_F5_SNMP:sysCmFailoverStatusId.last()}=4'
+              name: 'F5 VirtualServer "{#SNMPVALUE}" is disabled'
+              priority: INFO
+            -
+              expression: '{Template_F5_SNMP:ltmVsStatusAvailState.["{#SNMPVALUE}"].last()}=3 and {Template_F5_SNMP:sysCmFailoverStatusId.last()}=4'
+              name: 'F5 VirtualServer "{#SNMPVALUE}" is down'
+              priority: AVERAGE
+            -
+              expression: '{Template_F5_SNMP:ltmVsStatusAvailState.["{#SNMPVALUE}"].last()}=2 and {Template_F5_SNMP:sysCmFailoverStatusId.last()}=4'
+              name: 'F5 VirtualServer "{#SNMPVALUE}" is not currently available'
+              priority: WARNING
+          graph_prototypes:
+            -
+              name: 'VirtualServer "{#SNMPVALUE}" Connections vs Req'
+              graph_items:
+                -
+                  drawtype: BOLD_LINE
+                  color: C80000
+                  yaxisside: RIGHT
+                  item:
+                    host: Template_F5_SNMP
+                    key: 'ltmVirtualServStatClientCurConns.["{#SNMPVALUE}"]'
+                -
+                  sortorder: '1'
+                  drawtype: BOLD_LINE
+                  color: 3333FF
+                  item:
+                    host: Template_F5_SNMP
+                    key: 'ltmVirtualServStatTotRequests.["{#SNMPVALUE}"]'
+            -
+              name: 'VirtualServer "{#SNMPVALUE}" Traffic In/Out'
+              graph_items:
+                -
+                  drawtype: BOLD_LINE
+                  color: 00C800
+                  item:
+                    host: Template_F5_SNMP
+                    key: 'ltmVirtualServStatClientBytesIn.["{#SNMPVALUE}"]'
+                -
+                  sortorder: '1'
+                  drawtype: BOLD_LINE
+                  color: 0000C8
+                  item:
+                    host: Template_F5_SNMP
+                    key: 'ltmVirtualServStatClientBytesOut.["{#SNMPVALUE}"]'
+        -
+          name: Interface
+          type: SNMP_AGENT
+          snmp_oid: 'discovery[{#SNMPVALUE},F5-BIGIP-SYSTEM-MIB::sysIfName]'
+          key: sysIfName
+          item_prototypes:
+            -
+              name: 'Interface $1 speed'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysInterfaceMediaActiveSpeed."{#SNMPVALUE}"'
+              key: 'sysInterfaceMediaActiveSpeed[{#SNMPVALUE}]'
+              delay: '3600'
+              units: bps
+              applications:
+                -
+                  name: Interface
+            -
+              name: 'interface $1 description'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysInterfaceName."{#SNMPVALUE}"'
+              key: 'sysInterfaceName[{#SNMPVALUE}]'
+              delay: '3600'
+              trends: '0'
+              value_type: CHAR
+              applications:
+                -
+                  name: Interface
+            -
+              name: 'Interface $1 bytes in'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysInterfaceStatBytesIn."{#SNMPVALUE}"'
+              key: 'sysInterfaceStatBytesIn.[{#SNMPVALUE}]'
+              units: bps
+              applications:
+                -
+                  name: Interface
+              preprocessing:
+                -
+                  type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+                -
+                  type: MULTIPLIER
+                  parameters:
+                    - '8'
+            -
+              name: 'interface $1 bytes out'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysInterfaceStatBytesOut."{#SNMPVALUE}"'
+              key: 'sysInterfaceStatBytesOut.[{#SNMPVALUE}]'
+              units: bps
+              applications:
+                -
+                  name: Interface
+              preprocessing:
+                -
+                  type: CHANGE_PER_SECOND
+                  parameters:
+                    - ''
+                -
+                  type: MULTIPLIER
+                  parameters:
+                    - '8'
+            -
+              name: 'interface $1 status'
+              type: SNMP_AGENT
+              snmp_oid: 'F5-BIGIP-SYSTEM-MIB::sysInterfaceStatus."{#SNMPVALUE}"'
+              key: 'sysInterfaceStatus[{#SNMPVALUE}]'
+              delay: '60'
+              applications:
+                -
+                  name: Interface
+          graph_prototypes:
+            -
+              name: 'Interface "{#SNMPVALUE}" counter'
+              ymin_type_1: FIXED
+              graph_items:
+                -
+                  sortorder: '1'
+                  color: 1A7C11
+                  item:
+                    host: Template_F5_SNMP
+                    key: 'sysInterfaceStatBytesIn.[{#SNMPVALUE}]'
+                -
+                  sortorder: '2'
+                  color: F63100
+                  item:
+                    host: Template_F5_SNMP
+                    key: 'sysInterfaceStatBytesOut.[{#SNMPVALUE}]'
+  triggers:
+    -
+      expression: '{Template_F5_SNMP:F5-BIGIP-SYSTEM-MIB[sysGlobalTmmStatMemoryUsed].last(#1)}>({Template_F5_SNMP:F5-BIGIP-SYSTEM-MIB[sysGlobalTmmStatMemoryTotal].last(#1)}*0.75) and {Template_F5_SNMP:F5-BIGIP-SYSTEM-MIB[sysGlobalTmmStatMemoryUsed].last(#2)}>({Template_F5_SNMP:F5-BIGIP-SYSTEM-MIB[sysGlobalTmmStatMemoryTotal].last(#2)}*0.75) and {Template_F5_SNMP:F5-BIGIP-SYSTEM-MIB[sysGlobalTmmStatMemoryUsed].last(#3)}>({Template_F5_SNMP:F5-BIGIP-SYSTEM-MIB[sysGlobalTmmStatMemoryTotal].last(#3)}*0.75)'
+      name: 'TMM Free memory is less than 25% for 15 min on {HOST.HOST}'
+      priority: HIGH
+  graphs:
+    -
+      name: CPU使用率(1分)
+      graph_items:
+        -
+          sortorder: '1'
+          color: 1A7C11
+          item:
+            host: Template_F5_SNMP
+            key: sysGlobalTmmStatTmUsageRatio1m
+        -
+          sortorder: '2'
+          color: F63100
+          item:
+            host: Template_F5_SNMP
+            key: sysGlobalHostCpuUsageRatio1m
+    -
+      name: 'Current Connections'
+      graph_items:
+        -
+          sortorder: '1'
+          color: C80000
+          item:
+            host: Template_F5_SNMP
+            key: sysStatClientCurConns
+        -
+          sortorder: '2'
+          color: F63100
+          item:
+            host: Template_F5_SNMP
+            key: sysStatPvaClientCurConns
+        -
+          sortorder: '3'
+          color: 2774A4
+          item:
+            host: Template_F5_SNMP
+            key: sysStatPvaServerCurConns
+        -
+          sortorder: '4'
+          color: A54F10
+          item:
+            host: Template_F5_SNMP
+            key: sysStatServerCurConns
+    -
+      name: 'Host Memory'
+      graph_items:
+        -
+          color: C80000
+          item:
+            host: Template_F5_SNMP
+            key: sysHostMemoryUsed
+        -
+          sortorder: '1'
+          color: 00C800
+          item:
+            host: Template_F5_SNMP
+            key: sysHostMemoryTotal
+    -
+      name: 'HTTP Requests'
+      graph_items:
+        -
+          color: C80000
+          item:
+            host: Template_F5_SNMP
+            key: sysStatHttpRequests
+    -
+      name: 'Memory Usage'
+      graph_items:
+        -
+          color: 00C800
+          item:
+            host: Template_F5_SNMP
+            key: sysHostMemoryTotal
+        -
+          sortorder: '1'
+          color: C80000
+          item:
+            host: Template_F5_SNMP
+            key: sysHostMemoryUsed
+        -
+          sortorder: '2'
+          color: 0000C8
+          item:
+            host: Template_F5_SNMP
+            key: 'F5-BIGIP-SYSTEM-MIB[sysGlobalTmmStatMemoryTotal]'
+        -
+          sortorder: '3'
+          color: C800C8
+          item:
+            host: Template_F5_SNMP
+            key: 'F5-BIGIP-SYSTEM-MIB[sysGlobalTmmStatMemoryUsed]'
+        -
+          sortorder: '4'
+          color: 00C8C8
+          item:
+            host: Template_F5_SNMP
+            key: 'HOST-RESOURCES-MIB[hrStorageSize.10]'
+        -
+          sortorder: '5'
+          color: C8C800
+          item:
+            host: Template_F5_SNMP
+            key: 'HOST-RESOURCES-MIB[hrStorageUsed.10]'
+    -
+      name: 'Throughput (Bits)'
+      graph_items:
+        -
+          color: C80000
+          item:
+            host: Template_F5_SNMP
+            key: sysStatClientBytesIn
+        -
+          sortorder: '1'
+          color: 00C800
+          item:
+            host: Template_F5_SNMP
+            key: sysStatClientBytesOut
+        -
+          sortorder: '2'
+          color: 0000C8
+          item:
+            host: Template_F5_SNMP
+            key: sysStatServerBytesIn
+        -
+          sortorder: '3'
+          color: C800C8
+          item:
+            host: Template_F5_SNMP
+            key: sysStatServerBytesOut
+    -
+      name: 'Throughput (Packets)'
+      graph_items:
+        -
+          color: C80000
+          item:
+            host: Template_F5_SNMP
+            key: sysStatClientPktsIn5m
+        -
+          sortorder: '1'
+          color: 00C800
+          item:
+            host: Template_F5_SNMP
+            key: sysStatClientPktsOut5m
+        -
+          sortorder: '2'
+          color: 0000C8
+          item:
+            host: Template_F5_SNMP
+            key: sysStatServerPktsIn5m
+        -
+          sortorder: '3'
+          color: C800C8
+          item:
+            host: Template_F5_SNMP
+            key: sysStatServerPktsOut5m
+    -
+      name: 'TMM Memory'
+      graph_items:
+        -
+          color: C80000
+          item:
+            host: Template_F5_SNMP
+            key: sysHostMemoryUsed
+        -
+          sortorder: '1'
+          color: 00C800
+          item:
+            host: Template_F5_SNMP
+            key: sysHostMemoryTotal
+  value_maps:
+    -
+      name: 'F5 AvailState'
+      mappings:
+        -
+          value: '0'
+          newvalue: none
+        -
+          value: '1'
+          newvalue: green
+        -
+          value: '2'
+          newvalue: yellow
+        -
+          value: '3'
+          newvalue: red
+        -
+          value: '4'
+          newvalue: blue
+    -
+      name: 'F5 Failover state'
+      mappings:
+        -
+          value: '0'
+          newvalue: unknown
+        -
+          value: '1'
+          newvalue: offline
+        -
+          value: '2'
+          newvalue: forceOffline
+        -
+          value: '3'
+          newvalue: standby
+        -
+          value: '4'
+          newvalue: active
+    -
+      name: 'F5 ltmPoolLbMode'
+      mappings:
+        -
+          value: '0'
+          newvalue: roundRobin
+        -
+          value: '1'
+          newvalue: ratioMember
+        -
+          value: '2'
+          newvalue: leastConnMember
+        -
+          value: '3'
+          newvalue: observedMember
+        -
+          value: '4'
+          newvalue: predictiveMember
+        -
+          value: '5'
+          newvalue: ratioNodeAddress
+        -
+          value: '6'
+          newvalue: leastConnNodeAddress
+        -
+          value: '7'
+          newvalue: fastestNodeAddress
+        -
+          value: '8'
+          newvalue: observedNodeAddress
+        -
+          value: '9'
+          newvalue: predictiveNodeAddress
+        -
+          value: '10'
+          newvalue: dynamicRatio
+        -
+          value: '11'
+          newvalue: fastestAppResponse
+        -
+          value: '12'
+          newvalue: leastSessions
+        -
+          value: '13'
+          newvalue: dynamicRatioMember
+        -
+          value: '14'
+          newvalue: l3Addr
+        -
+          value: '15'
+          newvalue: weightedLeastConnMember
+        -
+          value: '16'
+          newvalue: weightedLeastConnNodeAddr
+        -
+          value: '17'
+          newvalue: ratioSession
+    -
+      name: 'F5 sysCmSyncStatusId'
+      mappings:
+        -
+          value: '0'
+          newvalue: unknown
+        -
+          value: '1'
+          newvalue: syncing
+        -
+          value: '2'
+          newvalue: needManualSync
+        -
+          value: '3'
+          newvalue: inSync
+        -
+          value: '4'
+          newvalue: syncFailed
+        -
+          value: '5'
+          newvalue: syncDisconnected
+        -
+          value: '6'
+          newvalue: standalone
+        -
+          value: '7'
+          newvalue: awaitingInitialSync
+        -
+          value: '8'
+          newvalue: incompatibleVersion
+        -
+          value: '9'
+          newvalue: partialSync
